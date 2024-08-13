@@ -1,0 +1,170 @@
+import random
+
+class Pythonogachi ():
+    def __init__(self, name):
+        self.name = name.title()
+        self.hunger = 0
+        self.boredom = 0
+        self.tiredness = 0
+        self.dirtiness = 0
+        self.food = 2
+        self.sleeping = False
+        self.alive = True
+    
+    def displayStatus (self):
+        print (f'\nCreature name: {self.name}')
+        print (f'Hunger (0-10): {self.hunger}')
+        print (f'Boredom (0-10): {self.boredom}')
+        print (f'Tiredness (0-10): {self.tiredness}')
+        print (f'Dirtiness (0-10): {self.dirtiness}')
+        print (f'\nFood Inventory: {self.food} pieces')
+        if self.sleeping:
+            print (f'Current Status: Sleeping')
+        else: 
+            print (f'Current Status: Awake')
+        
+    def kill (self):
+        if self.boredom >= 10 :
+            self.boredom = 10
+            print (f'{self.name} is bored. Falling asleep...')
+            self.sleeping = True
+        elif self.tiredness >= 10:
+            self.tiredness = 10
+            print (f'{self.name} is tired. Falling asleep...')
+            self.sleeping = True
+        elif self.hunger >= 10:
+            print (f'{self.name} starved to death!')
+            self.alive = False
+        elif self.dirtiness >= 10:
+            print (f'{self.name} suffered an infection and died!')
+            self.alive = False
+    
+    def feed (self):
+        if self.food > 0:
+            self.hunger -= random.randint(1,4)
+            self.food -= 1
+            print (f'{self.name} had a good meal!')
+        else:
+            print (f'{self.name} has no food')
+        if self.hunger < 0:
+            self.hunger = 0
+    
+    def play (self):
+        gameNum = random.randint (0,2)
+        print (f'\n{self.name} wants to play a game.')
+        print (f'{self.name} is thinking of a number 0, 1 or 2')
+        guess = int (input ('What is your guess: ').strip())
+        if guess == gameNum:
+            print ('Correct!')
+            self.boredom -= 3
+        else:
+            print (f'Wrong! {self.name} was thinking of {gameNum}')
+            self.boredom -= 1
+        if self.boredom < 0:
+            self.boredom = 0
+        
+    def sleep (self):
+        self.sleeping = True
+        self.tiredness -= 3
+        self.boredom -= 2
+        print (f'{self.name} is sleeping...')
+        if self.tiredness < 0:
+            self.tiredness = 0
+        elif self.boredom < 0:
+            self.boredom = 0
+            
+    def awake (self):
+        num = random.randint (0,2)
+        if num == 0:
+            print (f'{self.name} just woke up.')
+            self.sleeping = False
+            self.tiredness = 0
+        else:
+            print (f"{self.name} won't wake up.")
+            self.sleep()
+        
+    def takeBath (self):   
+        self.dirtiness = 0
+        print (f"{self.name} took a bath.")
+        
+    def forage (self):
+        found = random.randint (1,4)
+        self.food += found
+        self.dirtiness += 2
+        print (f"{self.name} found {found} pieces of food.")
+        
+    def incrimentValues (self, diffciculty):
+        self.hunger += random.randint(0,diffciculty)
+        self.dirtiness += random.randint(0,diffciculty)
+        if self.sleeping == False:
+            self.boredom += random.randint(0,diffciculty)
+            self.tiredness += random.randint(0,diffciculty)
+
+def menu (pet):
+    if pet.sleeping:
+        choice = input ('\nEnter (6) to try and wake up.').strip()
+        choice = '6'
+    else:
+        print ('\nEnter (1) to eat.')
+        print ('Enter (2) to play.')
+        print ('Enter (3) to sleep.')
+        print ('Enter (4) to take a bath.')
+        print ('Enter (5) to forage for food.')
+        choice = input ('What is your choice: ').strip()
+    return choice
+
+def action (pet, choice):
+    if choice == '1':
+        pet.feed()
+    elif choice == '2':
+        pet.play()
+    elif choice == '3':
+        pet.sleep()
+    elif choice == '4':
+        pet.takeBath()
+    elif choice == '5':
+        pet.forage()
+    elif choice == '6':
+        pet.awake()
+    else:
+        print ('Sorry, that is not a valid move.')
+
+
+print ('Welcome to the Pythonogachi Simulator App')
+
+playing = True
+while playing:
+
+    level = int (input ('Please choose a difficulty level (1-5): ').strip())
+    if level > 5:
+        level = 5
+    elif level < 1:
+        level = 1
+            
+    myPetName = input ('What name would you like to give your pet Pythonogachi: ').strip()       
+    myPet = Pythonogachi(myPetName)
+    round = 1
+
+    while myPet.alive:
+        
+        print ('\n------------------------------------------------------------')
+        print (f'Round #{round}')
+        myPet.displayStatus()
+        action (myPet, menu(myPet))
+       
+        print (f'\nRound #{round} Summary:')
+        myPet.displayStatus()
+        input ('\nPress "Enter" to continue...')
+        
+        myPet.incrimentValues(level)
+        myPet.kill()
+        
+        round += 1
+        
+    print ('\nRIP')
+    print (f'{myPet.name} survived a total of {round-1} rounds.')
+    
+    choice = input ('Do you want to play again (y/n): ').strip().lower()
+    if choice != 'y':
+        playing = False
+
