@@ -39,7 +39,6 @@ print(fn(7))        # 35
 
 
 #4
-
 def makeCounter():
     n = 0
     def inner ():
@@ -52,7 +51,6 @@ counter = makeCounter()
 print(counter())  # Вывод: 1
 print(counter())  # Вывод: 2
 print(counter())  # Вывод: 3
-
 
 new_counter = makeCounter()
 print(new_counter())  # Вывод: 1
